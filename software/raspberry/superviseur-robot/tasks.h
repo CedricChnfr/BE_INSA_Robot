@@ -45,7 +45,9 @@ public:
 
     /**
      * @brief Starts tasks
+     * rt_task_spawn(&task_desc, "my_task", 0, 0, T_JOINABLE, &task, null);
      */
+    
     void Run();
 
     /**
@@ -64,8 +66,12 @@ private:
     /**********************************************************************/
     ComMonitor monitor;
     ComRobot robot;
+    Camera * camera;// creat a object type Camera 
+    Arena arena;
     int robotStarted = 0;
     int move = MESSAGE_ROBOT_STOP;
+    int battery = MESSAGE_ROBOT_BATTERY_LEVEL;
+    int cameraStatus = 0;
     
     /**********************************************************************/
     /* Tasks                                                              */
@@ -76,6 +82,11 @@ private:
     RT_TASK th_openComRobot;
     RT_TASK th_startRobot;
     RT_TASK th_move;
+    RT_TASK th_battery;
+    RT_TASK th_camera;
+    RT_TASK th_start_camera;
+    RT_TASK th_stop_camera;
+    RT_TASK th_get_arena;
     
     /**********************************************************************/
     /* Mutex                                                              */
@@ -84,6 +95,10 @@ private:
     RT_MUTEX mutex_robot;
     RT_MUTEX mutex_robotStarted;
     RT_MUTEX mutex_move;
+    RT_MUTEX mutex_battery;
+    RT_MUTEX mutex_camera;
+    RT_MUTEX mutex_state_camera;
+    RT_MUTEX mutex_arena;
 
     /**********************************************************************/
     /* Semaphores                                                         */
@@ -92,6 +107,9 @@ private:
     RT_SEM sem_openComRobot;
     RT_SEM sem_serverOk;
     RT_SEM sem_startRobot;
+    RT_SEM sem_camStart;
+    RT_SEM sem_camStop;
+    RT_SEM sem_arena;
 
     /**********************************************************************/
     /* Message queues                                                     */
@@ -131,6 +149,35 @@ private:
      * @brief Thread handling control of the robot.
      */
     void MoveTask(void *arg);
+    
+    
+    /**
+     * @brief Get the robot battery
+     */
+    void GetBatteryTask(void *arg);
+    
+    
+
+    /**
+     * @brief Get the image of the camera in the monitor 
+     */
+    void StartCamera(void *arg);
+    
+    /**
+     * @brief Get the image of the camera in the monitor 
+     */
+    void ScreenCamera(void *arg);
+    
+    /**
+     * @brief Get the image of the camera in the monitor 
+     */
+    void StopCamera(void *arg);
+    
+    /**
+     * @brief Get the image of the camera in the monitor 
+     */
+    void GetArenaTask(void *arg);
+    
     
     /**********************************************************************/
     /* Queue services                                                     */
